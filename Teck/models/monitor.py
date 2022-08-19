@@ -48,22 +48,24 @@ class Monitor(object):
         while True:
             time.sleep(3)
             self.teck.refresh_button_text_image()
-            active_app_name = get_active_application_name()
-            new_page_name = (
-                active_app_name
-                if active_app_name in self.teck.config.pages
-                else list(self.teck.config.pages.keys())[0]
-            )
-            if new_page_name != self.teck.active_page:
-                self.teck.blank_page()
-                logger.info("Switching to new page: %s", new_page_name)
-                self.teck.active_page = new_page_name
-                try:
-                    self.teck.refresh_page()
-                except TransportError:
-                    logger.warning(
-                        "No HID device, sleep %s seconds and retry",
-                        self.teck.config.retry_interval,
-                    )
-                    time.sleep(self.teck.config.retry_interval)
-                    self.teck.refresh_page()
+
+            if not self.teck.page_freezed:
+                active_app_name = get_active_application_name()
+                new_page_name = (
+                    active_app_name
+                    if active_app_name in self.teck.config.pages
+                    else list(self.teck.config.pages.keys())[0]
+                )
+                if new_page_name != self.teck.active_page:
+                    self.teck.blank_page()
+                    logger.info("Switching to new page: %s", new_page_name)
+                    self.teck.active_page = new_page_name
+                    try:
+                        self.teck.refresh_page()
+                    except TransportError:
+                        logger.warning(
+                            "No HID device, sleep %s seconds and retry",
+                            self.teck.config.retry_interval,
+                        )
+                        time.sleep(self.teck.config.retry_interval)
+                        self.teck.refresh_page()
