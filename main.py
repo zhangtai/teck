@@ -1,4 +1,4 @@
-from Teck.models.monitor_darwin import Monitor
+from Teck.models.monitor import Monitor
 
 if __name__ == "__main__":
     monitor = Monitor()
