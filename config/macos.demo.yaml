@@ -1,0 +1,64 @@
+---
+refresh_interval: 3
+retry_interval: 5
+pages:
+  "com.apple.finder":
+    buttons:
+      - position: [1, 1]
+        label: Applications
+        image_provider: fontawesome
+        image: brands/apple.svg
+        action:
+          hotkeys: shift|command|a
+      - position: [1, 2]
+        label: Downloads
+        image_provider: fontawesome
+        image: solid/download.svg
+        action:
+          hotkeys: option|command|l
+  "com.microsoft.VSCode":
+    buttons:
+      - position: [1, 1]
+        label: VSCode
+        image_provider: fontawesome
+        image: solid/magnifying-glass.svg
+        action:
+          hotkeys: f1
+      - position: [1, 2]
+        label: Search
+        image_provider: fontawesome
+        image: solid/magnifying-glass.svg
+        action:
+          hotkeys: command|shift|f
+      - position: [3, 2]
+        label: Time
+        image_provider: function
+        image: datetime.now().strftime("%H:%M")
+        action:
+          hotkeys: win
+  "co.zeit.hyper":
+    buttons:
+      - position: [1, 1]
+        label: Hyper
+        image_provider: fontawesome
+        image: solid/terminal.svg
+        action:
+          hotkeys: f1
+      - position: [1, 2]
+        label: Search
+        image_provider: fontawesome
+        image: solid/magnifying-glass.svg
+        action:
+          hotkeys: command|f
+      - position: [2, 1]
+        label: Copy
+        image_provider: fontawesome
+        image: solid/copy.svg
+        action:
+          hotkeys: command|c
+      - position: [2, 2]
+        label: Paste
+        image_provider: fontawesome
+        image: solid/paste.svg
+        action:
+          hotkeys: command|v

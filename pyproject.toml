@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "teck"
+version = "0.1.0"
+description = ""
+authors = ["Tai Zhang <tai.zhang@outlook.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Pillow = "^9.2.0"
+streamdeck = "^0.9.1"
+reportlab = "^3.6.11"
+svglib = "^1.4.1"
+pyobjc = "^8.5"
+psutil = "^5.9.1"
+PyAutoGUI = "^0.9.53"
+PyYAML = "^6.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.1.2"
+flake8 = "^5.0.4"
+black = "^22.6.0"
+pylint = "^2.14.5"
+isort = "^5.10.1"
+mypy = "^0.971"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
