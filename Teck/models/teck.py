@@ -1,5 +1,6 @@
 import logging
 import subprocess
+from pathlib import Path
 from typing import Callable
 
 import pyautogui
@@ -7,13 +8,14 @@ from PIL import Image, ImageOps
 from StreamDeck.DeviceManager import DeviceManager
 from StreamDeck.Devices.StreamDeck import StreamDeck
 
+from config.settings import DECK_CONFIG, ButtonConfig
+
 from ..utils.images import (
-    position_to_index,
-    svg_to_png,
     generate_button_function_image,
+    position_to_index,
     render_button_image,
+    svg_to_png,
 )
-from config.settings import ButtonConfig, DECK_CONFIG
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s: %(message)s"
@@ -39,7 +41,7 @@ class Teck(object):
         if streamdecks:
             return streamdecks[0]
         else:
-            raise (ModuleNotFoundError)
+            raise ModuleNotFoundError
 
     def get_button_config(self, key_index):
         return next(
@@ -85,7 +87,7 @@ def update_button_image(deck: StreamDeck, button: ButtonConfig, pressed: bool):
     button_index = position_to_index(button.position)
     if button_index >= 0 and button_index <= deck.key_count() - 1:
         icon = Image.open("assets/default_icon.png")
-        if button.image_provider == "fontawesome":
+        if button.image_provider == "fontawesome" and Path(button.image).exists():
             png_path = svg_to_png(button.image)
             icon = ImageOps.invert(Image.open(png_path))
         if button.image_provider == "file":
