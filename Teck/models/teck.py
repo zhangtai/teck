@@ -1,14 +1,11 @@
 import logging
 import subprocess
-import time
 from typing import Callable
 
 import pyautogui
-from AppKit import NSWorkspace
 from PIL import Image, ImageOps
 from StreamDeck.DeviceManager import DeviceManager
 from StreamDeck.Devices.StreamDeck import StreamDeck
-from StreamDeck.Transport.Transport import TransportError
 
 from ..utils.images import (
     position_to_index,
@@ -32,39 +29,10 @@ class Teck(object):
         self.active_page: str = list(self.config.pages.keys())[0]
         self._active_process_name: str = ""
 
-    def start(self) -> None:
         self.device.open()
         self.device.reset()
         self.device.set_brightness(50)
         self.refresh_page()
-        while True:
-            time.sleep(self.config.refresh_interval)
-            self.refresh_button_text_image()
-
-            active_app_name = (
-                NSWorkspace.sharedWorkspace()
-                .activeApplication()
-                .get("NSApplicationBundleIdentifier")
-            )
-            new_page_name = (
-                active_app_name
-                if active_app_name in self.config.pages
-                else list(self.config.pages.keys())[0]
-            )
-            if new_page_name != self.active_page:
-                self.blank_page()
-                logger.info("Switching to new page: %s", new_page_name)
-                self.active_page = new_page_name
-                try:
-                    self.refresh_page()
-                except TransportError:
-                    logger.warning(
-                        "No HID device, sleep %s seconds and retry",
-                        self.config.retry_interval,
-                    )
-                    time.sleep(self.config.retry_interval)
-                    self.refresh_page()
-        logger.info("Exited")
 
     def _discover_first_deck(self) -> StreamDeck:
         streamdecks = DeviceManager().enumerate()

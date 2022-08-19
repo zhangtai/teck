@@ -1,5 +1,5 @@
-from Teck.models.teck import Teck
+from Teck.models.monitor_darwin import Monitor
 
 if __name__ == "__main__":
-    teck = Teck()
-    teck.start()
+    monitor = Monitor()
+    monitor.start()
