@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 if platform.system() == "Darwin":
-    from AppKit import NSWorkspace
+    from AppKit import NSWorkspace  # pylint: disable=no-name-in-module
 
     def get_active_application_name() -> str:
         active_app_name = (
@@ -25,10 +25,10 @@ if platform.system() == "Darwin":
 
 if platform.system() == "Windows":
     import psutil
-    from win32gui import GetForegroundWindow, GetWindowText
-    from win32process import GetWindowThreadProcessId
+    from win32gui import GetForegroundWindow, GetWindowText  # noqa=F401 # pylint: disable=import-error,unused-import
+    from win32process import GetWindowThreadProcessId  # noqa=F401 # pylint: disable=import-error,unused-import
 
-    def get_active_application_name() -> str:
+    def get_active_application_name() -> str:  # noqa=F811 # pylint: disable=function-redefined
         new_pid = GetWindowThreadProcessId(GetForegroundWindow())
         try:
             active_app_name = psutil.Process(new_pid[-1]).name()
@@ -38,7 +38,7 @@ if platform.system() == "Windows":
         return active_app_name
 
 
-class Monitor(object):
+class Monitor():
     """Class to monitor window switch and trigger Teck instance page switching."""
     def __init__(self) -> None:
         self.teck = Teck()

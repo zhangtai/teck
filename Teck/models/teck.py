@@ -1,20 +1,17 @@
 import logging
 import subprocess
-from pathlib import Path
 from typing import Callable
 
 import pyautogui
-from PIL import Image, ImageOps, ImageDraw
+from PIL import Image, ImageDraw
 from StreamDeck.DeviceManager import DeviceManager
 from StreamDeck.Devices.StreamDeck import StreamDeck
 
 from config.settings import DECK_CONFIG, ButtonConfig
 
 from ..utils.images import (
-    generate_button_function_image,
     position_to_index,
     render_button_image,
-    svg_to_png,
 )
 
 logging.basicConfig(
@@ -45,12 +42,10 @@ class Teck(object):
             raise ModuleNotFoundError
 
     def get_button_config(self, key_index):
+        page = self.config.pages.get(self.active_page)
+        assert page is not None
         return next(
-            (
-                b
-                for b in self.config.pages.get(self.active_page).buttons
-                if position_to_index(b.position) == key_index
-            ),
+            (b for b in page.buttons if position_to_index(b.position) == key_index),
             None,
         )
 
@@ -64,16 +59,20 @@ class Teck(object):
 
     def refresh_page(self) -> None:
         # logger.info(self.active_page)
-        for button in self.config.pages.get(self.active_page).buttons:
+        page = self.config.pages.get(self.active_page)
+        assert page is not None
+        for button in page.buttons:
             logger.debug(button.position)
             pinned = bool(button.position == [1, 1] and self.page_freezed)
             update_button_image(self.device, button, pinned, False)
         self.device.set_key_callback(get_callback(self, self.device, self.active_page))
 
     def refresh_button_text_image(self) -> None:
+        page = self.config.pages.get(self.active_page)
+        assert page is not None
         function_image_buttons = filter(
             lambda b: b.image_provider == "function",
-            self.config.pages.get(self.active_page).buttons,
+            page.buttons,
         )
         for button in function_image_buttons:
             image = render_button_image(
@@ -90,18 +89,6 @@ class Teck(object):
         else:
             logger.info("Freezing page %s", self.active_page)
         self.page_freezed = not self.page_freezed
-
-
-def get_button_image_from_config(button: ButtonConfig) -> Image:
-    image = Image.open("assets/default_icon.png")
-    if button.image_provider == "fontawesome" and Path(button.image).exists():
-        png_path = svg_to_png(button.image)
-        image = ImageOps.invert(Image.open(png_path))
-    if button.image_provider == "file":
-        image = Image.open(button.image)
-    if button.image_provider == "function":
-        image = generate_button_function_image(button.image)
-    return image
 
 
 def add_pin(base: Image) -> Image:
@@ -126,9 +113,7 @@ def update_button_image(
     button_index = position_to_index(button.position)
     if button_index >= 0 and button_index <= deck.key_count() - 1:
         icon = add_pin(button.image) if pinned else button.image
-        image = render_button_image(
-            deck, icon, button.label, pressed
-        )
+        image = render_button_image(deck, icon, button.label, pressed)
         with deck:
             deck.set_key_image(button_index, image)
 
@@ -136,12 +121,10 @@ def update_button_image(
 def get_callback(teck: Teck, deck: StreamDeck, page_name: str) -> Callable:
     def key_callback(stream_deck: StreamDeck, key: int, pressed: bool):
         logger.info("Page: %s. %s: %s", page_name, key, pressed)
+        page = DECK_CONFIG.pages.get(page_name)
+        assert page is not None
         button = next(
-            (
-                b
-                for b in DECK_CONFIG.pages.get(page_name).buttons
-                if position_to_index(b.position) == key
-            ),
+            (b for b in page.buttons if position_to_index(b.position) == key),
             None,
         )
         if button:

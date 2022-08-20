@@ -35,7 +35,7 @@ class DeckConfig:
 def get_deck_config(
     config_file: str = f"config/{platform.system()}.demo.yaml",
 ) -> DeckConfig:
-    config_dict = yaml.load(Path(config_file).read_text(), Loader=yaml.FullLoader)
+    config_dict = yaml.load(Path(config_file).read_text(encoding="utf-8"), Loader=yaml.FullLoader)
     configs = DeckConfig(
         refresh_interval=config_dict.get("refresh_interval", 3),
         retry_interval=config_dict.get("retry_interval", 5),
