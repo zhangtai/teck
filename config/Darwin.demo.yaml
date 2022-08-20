@@ -20,8 +20,8 @@ pages:
     buttons:
       - position: [1, 1]
         label: VSCode
-        image_provider: fontawesome
-        image: solid/magnifying-glass.svg
+        image_provider: file
+        image: vscode.png
         action:
           hotkeys: f1
       - position: [1, 2]
@@ -62,3 +62,19 @@ pages:
         image: solid/paste.svg
         action:
           hotkeys: command|v
+  "com.apple.Safari":
+    buttons:
+      - position: [1, 1]
+        label: Safari
+        image_provider: file
+        image: safari.png
+        action:
+          hotkeys: f1
+  "org.mozilla.firefox":
+    buttons:
+      - position: [1, 1]
+        label: Firefox
+        image_provider: file
+        image: firefox.png
+        action:
+          hotkeys: f1

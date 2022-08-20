@@ -6,6 +6,12 @@ from StreamDeck.Transport.Transport import TransportError
 
 from .teck import Teck
 
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %f(levelname)s: %(message)s"
+)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
 if platform.system() == "Darwin":
     from AppKit import NSWorkspace
 
@@ -30,12 +36,6 @@ if platform.system() == "Windows":
             logger.warning("Can't get process, ignore")
             active_app_name = "explorer.exe"
         return active_app_name
-
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %f(levelname)s: %(message)s"
-)
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 
 class Monitor(object):

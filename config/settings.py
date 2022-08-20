@@ -3,17 +3,21 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import yaml
+from PIL import Image, ImageOps
+from Teck.utils.images import generate_button_function_image, svg_to_png
 
 FONTAWESOME_PATH = "assets/fontawesome"
 DEFAULT_FONT = "assets/fonts/Roboto-Regular.ttf"
+
 
 @dataclass
 class ButtonConfig:
     label: str
     image_provider: str
-    image: str
+    image: Image
     position: tuple[int, int]
     action: dict[str, str]
+
 
 @dataclass
 class PageConfig:
@@ -28,7 +32,9 @@ class DeckConfig:
     pages: dict[str, PageConfig]
 
 
-def get_deck_config(config_file: str = f"config/{platform.system()}.demo.yaml") -> DeckConfig:
+def get_deck_config(
+    config_file: str = f"config/{platform.system()}.demo.yaml",
+) -> DeckConfig:
     config_dict = yaml.load(Path(config_file).read_text(), Loader=yaml.FullLoader)
     configs = DeckConfig(
         refresh_interval=config_dict.get("refresh_interval", 3),
@@ -38,11 +44,19 @@ def get_deck_config(config_file: str = f"config/{platform.system()}.demo.yaml") 
     for name, page in config_dict.get("pages").items():
         buttons = []
         for button in page["buttons"]:
+            image_path = button["image"]
+            button["image"] = Image.open("assets/default_icon.png")
             button_config = ButtonConfig(**button)
-            if button_config.image_provider == "fontawesome":
-                button_config.image = f"{FONTAWESOME_PATH}/svgs/{button_config.image}"
+            if (
+                button_config.image_provider == "fontawesome"
+                and Path(f"{FONTAWESOME_PATH}/svgs/{image_path}").exists()
+            ):
+                png_path = svg_to_png(f"{FONTAWESOME_PATH}/svgs/{image_path}")
+                button_config.image = ImageOps.invert(Image.open(png_path))
             if button_config.image_provider == "file":
-                button_config.image = f"assets/pages/{name}/{button_config.image}"
+                button_config.image = Image.open(f"assets/pages/{name}/{image_path}")
+            if button_config.image_provider == "function":
+                button_config.image = generate_button_function_image(image_path)
             buttons.append(button_config)
         configs.pages[name] = PageConfig(
             name=name,

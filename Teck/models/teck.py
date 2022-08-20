@@ -63,7 +63,7 @@ class Teck(object):
                 self.device.set_key_image(key, button_image)
 
     def refresh_page(self) -> None:
-        logger.info(self.active_page)
+        # logger.info(self.active_page)
         for button in self.config.pages.get(self.active_page).buttons:
             logger.debug(button.position)
             pinned = bool(button.position == [1, 1] and self.page_freezed)
@@ -76,10 +76,9 @@ class Teck(object):
             self.config.pages.get(self.active_page).buttons,
         )
         for button in function_image_buttons:
-            icon = generate_button_function_image(button.image)
             image = render_button_image(
                 self.device,
-                icon,
+                button.image,
                 button.label,
             )
             with self.device:
@@ -126,11 +125,9 @@ def update_button_image(
 ):
     button_index = position_to_index(button.position)
     if button_index >= 0 and button_index <= deck.key_count() - 1:
-        button_image_from_config = get_button_image_from_config(button)
-        if pinned:
-            button_image_from_config = add_pin(button_image_from_config)
+        icon = add_pin(button.image) if pinned else button.image
         image = render_button_image(
-            deck, button_image_from_config, button.label, pressed
+            deck, icon, button.label, pressed
         )
         with deck:
             deck.set_key_image(button_index, image)
