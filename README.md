@@ -19,7 +19,8 @@ Please refer to [Default LibUSB HIDAPI Backend] for details for all OSs.
 ```shell
 brew install hidapi
 
-git clone --depth 1 https://github.com/FortAwesome/Font-Awesome.git assets/fontawesome
+git clone --depth 1 https://github.com/FortAwesome/Font-Awesome.git assets/vendor/fontawesome
+git clone --depth 1 https://github.com/simple-icons/simple-icons.git assets/vendor/simple-icons
 ```
 
 ### Windows

@@ -6,75 +6,95 @@ pages:
     buttons:
       - position: [1, 1]
         label: Applications
-        image_provider: fontawesome
-        image: brands/apple.svg
+        image:
+          provider: fontawesome
+          path: brands/apple.svg
         action:
           hotkeys: shift|command|a
       - position: [1, 2]
         label: Downloads
-        image_provider: fontawesome
-        image: solid/download.svg
+        image:
+          provider: fontawesome
+          path: solid/download.svg
         action:
           hotkeys: option|command|l
   "com.microsoft.VSCode":
     buttons:
       - position: [1, 1]
         label: VSCode
-        image_provider: file
-        image: vscode.png
+        image:
+          provider: file
+          path: vscode.png
         action:
           hotkeys: f1
       - position: [1, 2]
         label: Search
-        image_provider: fontawesome
-        image: solid/magnifying-glass.svg
+        image:
+          provider: fontawesome
+          path: solid/magnifying-glass.svg
         action:
           hotkeys: command|shift|f
       - position: [3, 2]
         label: Time
-        image_provider: function
-        image: datetime.now().strftime("%H:%M")
+        image:
+          provider: function
+          function: datetime.now().strftime("%H:%M")
         action:
           hotkeys: win
   "co.zeit.hyper":
     buttons:
       - position: [1, 1]
         label: Hyper
-        image_provider: fontawesome
-        image: solid/terminal.svg
+        image:
+          provider: fontawesome
+          path: solid/terminal.svg
         action:
           hotkeys: f1
       - position: [1, 2]
         label: Search
-        image_provider: fontawesome
-        image: solid/magnifying-glass.svg
+        image:
+          provider: fontawesome
+          path: solid/magnifying-glass.svg
         action:
           hotkeys: command|f
       - position: [2, 1]
         label: Copy
-        image_provider: fontawesome
-        image: solid/copy.svg
+        image:
+          provider: fontawesome
+          path: solid/copy.svg
         action:
           hotkeys: command|c
       - position: [2, 2]
         label: Paste
-        image_provider: fontawesome
-        image: solid/paste.svg
+        image:
+          provider: fontawesome
+          path: solid/paste.svg
         action:
           hotkeys: command|v
   "com.apple.Safari":
     buttons:
       - position: [1, 1]
         label: Safari
-        image_provider: file
-        image: safari.png
+        image:
+          provider: file
+          path: safari.png
         action:
           hotkeys: f1
   "org.mozilla.firefox":
     buttons:
       - position: [1, 1]
         label: Firefox
-        image_provider: file
-        image: firefox.png
+        image:
+          provider: file
+          path: firefox.png
         action:
           hotkeys: f1
+  "com.apple.Photos":
+    buttons:
+      - position: [1, 2]
+        label: Add Fav
+        image:
+          provider: fontawesome
+          path: solid/heart.svg
+        action:
+          hotkeys: .

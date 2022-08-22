@@ -23,7 +23,7 @@ def position_to_index(
 
 def svg_to_png(source: str) -> str:
     # logger.info("Converting %s to PNG", source)
-    logger.info(source)
+    # logger.info(source)
     drawing = svg2rlg(source)
     filename_no_ext = Path(source).stem
     final_image = f"assets/temp/{filename_no_ext}.png"
@@ -47,12 +47,13 @@ def generate_button_function_image(script: str, font_filename: str = "assets/fon
 
 def render_button_image(
     deck: StreamDeck,
-    icon: Image,
+    icon: Image.Image,
     label_text: str,
     pressed: bool = False,
     font_filename: str = "assets/fonts/Roboto-Regular.ttf",
 ):
     margins = [10, 10, 30, 10] if pressed else [0, 0, 20, 0]
+    # logger.info(icon)
     image = PILHelper.create_scaled_image(deck, icon, margins=margins)
     draw = ImageDraw.Draw(image)
     font = ImageFont.truetype(font_filename, 14)

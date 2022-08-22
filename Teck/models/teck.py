@@ -8,6 +8,7 @@ from StreamDeck.DeviceManager import DeviceManager
 from StreamDeck.Devices.StreamDeck import StreamDeck
 
 from config.settings import DECK_CONFIG, ButtonConfig
+from Teck.utils.images import generate_button_function_image
 
 from ..utils.images import (
     position_to_index,
@@ -69,15 +70,19 @@ class Teck(object):
 
     def refresh_button_text_image(self) -> None:
         page = self.config.pages.get(self.active_page)
+        logger.info("refresh_button_text_image for %s", self.active_page)
         assert page is not None
         function_image_buttons = filter(
-            lambda b: b.image_provider == "function",
+            lambda b: b.image.provider == "function",
             page.buttons,
         )
         for button in function_image_buttons:
+            assert button.image.pil_image is not None
+            assert button.image.function is not None
+
             image = render_button_image(
                 self.device,
-                button.image,
+                generate_button_function_image(button.image.function),
                 button.label,
             )
             with self.device:
@@ -91,7 +96,7 @@ class Teck(object):
         self.page_freezed = not self.page_freezed
 
 
-def add_pin(base: Image) -> Image:
+def add_pin(base: Image.Image) -> Image.Image:
     logger.debug(base.size)
     draw = ImageDraw.Draw(base)
     draw.ellipse(
@@ -111,8 +116,10 @@ def update_button_image(
     deck: StreamDeck, button: ButtonConfig, pinned: bool, pressed: bool
 ):
     button_index = position_to_index(button.position)
-    if button_index >= 0 and button_index <= deck.key_count() - 1:
-        icon = add_pin(button.image) if pinned else button.image
+    if 0 <= button_index <= deck.key_count() - 1:
+        assert button.image.pil_image is not None
+        icon = add_pin(button.image.pil_image) if pinned else button.image.pil_image
+        assert icon is not None
         image = render_button_image(deck, icon, button.label, pressed)
         with deck:
             deck.set_key_image(button_index, image)

@@ -187,5 +187,5 @@ cython_debug/
 #.idea/
 
 demo/
-assets/fontawesome/
+assets/vendor/
 assets/temp/*
