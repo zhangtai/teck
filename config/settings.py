@@ -35,11 +35,23 @@ class ButtonImage:
 
 
 @dataclass
+class ButtonAction:
+    type: str
+    instruction: str
+
+
+@dataclass
+class ButtonActions:
+    short: ButtonAction
+    long: Optional[ButtonAction]
+
+
+@dataclass
 class ButtonConfig:
     label: str
     image: ButtonImage
     position: tuple[int, int]
-    action: dict[str, str]
+    actions: ButtonActions
 
 
 @dataclass
@@ -90,11 +102,16 @@ def get_deck_config(
                     button_image.pil_image = ImageOps.invert(button_image.pil_image)
                 button_image.path = button['image']['path']
 
+            short_action = ButtonAction(**button["actions"]["short"])
+            long_action = ButtonAction(**button["actions"]["long"]) if button["actions"].get("long", None) else None
             button_config = ButtonConfig(
                 label=button["label"],
                 image=button_image,
                 position=button["position"],
-                action=button["action"]
+                actions=ButtonActions(
+                    short=short_action,
+                    long=long_action,
+                ),
             )
             buttons.append(button_config)
         configs.pages[page_name] = PageConfig(

@@ -1,5 +1,6 @@
 import logging
 import subprocess
+import time
 from typing import Callable
 
 import pyautogui
@@ -16,7 +17,7 @@ logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s: %(message)s"
 )
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 
 class Teck(object):
@@ -27,6 +28,7 @@ class Teck(object):
         self.active_page: str = list(self.config.pages.keys())[0]
         self.page_freezed = False
         self._active_process_name: str = ""
+        self.button_pressed_time = [0] * 15
 
         self.device.open()
         self.device.reset()
@@ -145,10 +147,17 @@ def get_callback(teck: Teck, deck: StreamDeck, page_name: str) -> Callable:
             pinned = bool(button.position == [1, 1] and teck.page_freezed)
             update_button_image(deck, button, pinned, pressed)
             if pressed:
-                action = list(button.action.keys())[0]
-                if action == "subprocess":
-                    subprocess.Popen(button.action["subprocess"])
-                if action == "hotkeys":
-                    pyautogui.hotkey(*button.action["hotkeys"].split("|"))
+                teck.button_pressed_time[key] = time.time()
+            else:
+                duration = time.time() - teck.button_pressed_time[key]
+                logger.debug("Pressing duration: %s", duration)
+
+                action = button.actions.short if duration < 0.55 or not button.actions.long else button.actions.long
+                logger.debug("Action is: %s", action)
+                if action.type == "subprocess":
+                    subprocess.Popen(action.instruction)
+                if action.type == "hotkeys":
+                    pyautogui.hotkey(*action.instruction.split("+"))
+                teck.button_pressed_time[key] = 0
 
     return key_callback
