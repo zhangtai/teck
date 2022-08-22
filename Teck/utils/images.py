@@ -1,4 +1,3 @@
-from datetime import datetime  # noqa: F401 # pylint: disable=unused-import
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps
@@ -6,6 +5,8 @@ from reportlab.graphics import renderPM
 from svglib.svglib import svg2rlg
 from StreamDeck.Devices.StreamDeck import StreamDeck
 from StreamDeck.ImageHelpers import PILHelper
+
+from config.button_display import time_display, today_time_remains
 
 
 def position_to_index(

@@ -38,7 +38,7 @@ pages:
         label: Time
         image:
           provider: function
-          function: datetime.now().strftime("%H:%M")
+          function: time_display()
         action:
           hotkeys: win
   "co.zeit.hyper":
