@@ -1,12 +1,12 @@
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont, ImageOps
+from PIL import Image, ImageDraw, ImageFont
 from reportlab.graphics import renderPM
 from svglib.svglib import svg2rlg
 from StreamDeck.Devices.StreamDeck import StreamDeck
 from StreamDeck.ImageHelpers import PILHelper
 
-from config.button_display import time_display, today_time_remains
+from config.button_display import time_display, today_time_remains  # noqa: F401 # pylint: disable=unused-import
 
 
 def svg_to_png(source: str) -> str:
@@ -54,7 +54,7 @@ def render_button_image(
 
 def open_image_as_png(input_file: str) -> Image.Image:
     if Path(input_file).suffix.lower() == ".svg":
-        return ImageOps.invert(Image.open(svg_to_png(input_file)))
+        return Image.open(svg_to_png(input_file))
     if Path(input_file).suffix.lower() == ".png":
         return Image.open(input_file)
     raise TypeError

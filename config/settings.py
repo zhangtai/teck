@@ -4,16 +4,25 @@ from pathlib import Path
 from typing import Optional
 
 import yaml
-from PIL import Image
+from PIL import Image, ImageOps
 from Teck.utils.images import generate_button_function_image, open_image_as_png
 
 DEFAULT_FONT = "assets/fonts/Roboto-Regular.ttf"
 
-FILE_PROVIDER_BASE_PATH = {
-    "file": "assets/pages",
-    "fontawesome": "assets/vendor/fontawesome/svgs",
-    "fluentui-emoji": "assets/vendor/fluentui-emoji/assets",
-    "google-cloud-icons": "assets/vendor/google-cloud-icons",
+IMAGE_PROVIDERS = {
+    "file": {
+        "path": "assets/pages"
+    },
+    "fontawesome": {
+        "path": "assets/vendor/fontawesome/svgs",
+        "inverted": True
+    },
+    "fluentui-emoji": {
+        "path": "assets/vendor/fluentui-emoji/assets"
+    },
+    "google-cloud-icons": {
+        "path": "assets/vendor/google-cloud-icons"
+    },
 }
 
 
@@ -73,10 +82,12 @@ def get_deck_config(
                 button_image.function = button["image"]["function"]
             else:
                 if button["image"]["provider"] == "file":
-                    image_base_path = FILE_PROVIDER_BASE_PATH.get(button["image"]["provider"]) + "/" + page_name
+                    image_base_path = IMAGE_PROVIDERS.get(button["image"]["provider"]).get("path") + "/" + page_name
                 else:
-                    image_base_path = FILE_PROVIDER_BASE_PATH.get(button["image"]["provider"])
+                    image_base_path = IMAGE_PROVIDERS.get(button["image"]["provider"]).get("path")
                 button_image.pil_image = open_image_as_png(f"{image_base_path}/{button['image']['path']}")
+                if IMAGE_PROVIDERS.get(button["image"]["provider"]).get("inverted", False):
+                    button_image.pil_image = ImageOps.invert(button_image.pil_image)
                 button_image.path = button['image']['path']
 
             button_config = ButtonConfig(
