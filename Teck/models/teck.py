@@ -70,7 +70,6 @@ class Teck(object):
 
     def refresh_button_text_image(self) -> None:
         page = self.config.pages.get(self.active_page)
-        logger.info("refresh_button_text_image for %s", self.active_page)
         assert page is not None
         function_image_buttons = filter(
             lambda b: b.image.provider == "function",

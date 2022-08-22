@@ -1,4 +1,3 @@
-import logging
 from datetime import datetime  # noqa: F401 # pylint: disable=unused-import
 from pathlib import Path
 
@@ -8,12 +7,6 @@ from svglib.svglib import svg2rlg
 from StreamDeck.Devices.StreamDeck import StreamDeck
 from StreamDeck.ImageHelpers import PILHelper
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %f(levelname)s: %(message)s"
-)
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-
 
 def position_to_index(
     position: tuple[int, int], layout: tuple[int, int] = (3, 5)
@@ -22,8 +15,6 @@ def position_to_index(
 
 
 def svg_to_png(source: str) -> str:
-    # logger.info("Converting %s to PNG", source)
-    # logger.info(source)
     drawing = svg2rlg(source)
     filename_no_ext = Path(source).stem
     final_image = f"assets/temp/{filename_no_ext}.png"
@@ -53,7 +44,6 @@ def render_button_image(
     font_filename: str = "assets/fonts/Roboto-Regular.ttf",
 ):
     margins = [10, 10, 30, 10] if pressed else [0, 0, 20, 0]
-    # logger.info(icon)
     image = PILHelper.create_scaled_image(deck, icon, margins=margins)
     draw = ImageDraw.Draw(image)
     font = ImageFont.truetype(font_filename, 14)
