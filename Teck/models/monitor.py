@@ -45,10 +45,9 @@ class Monitor():
         self.active_application = "system"
 
     def start(self) -> None:
+        logger.info("Monitor started")
         while True:
-            time.sleep(3)
             self.teck.refresh_button_text_image()
-
             if not self.teck.page_freezed:
                 active_app_name = get_active_application_name()
                 new_page_name = (
@@ -69,3 +68,4 @@ class Monitor():
                         )
                         time.sleep(self.teck.config.retry_interval)
                         self.teck.refresh_page()
+            time.sleep(3)

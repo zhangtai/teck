@@ -24,6 +24,7 @@ logger.setLevel(logging.INFO)
 
 class Teck(object):
     def __init__(self) -> None:
+        logger.info("Connecting device")
         self.device = self._discover_first_deck()
         self.config = DECK_CONFIG
         self.active_page: str = list(self.config.pages.keys())[0]
@@ -33,6 +34,8 @@ class Teck(object):
         self.device.open()
         self.device.reset()
         self.device.set_brightness(50)
+
+        logger.info("First refresh page when init device")
         self.refresh_page()
 
     def _discover_first_deck(self) -> StreamDeck:
@@ -59,7 +62,7 @@ class Teck(object):
                 self.device.set_key_image(key, button_image)
 
     def refresh_page(self) -> None:
-        # logger.info(self.active_page)
+        logger.info("Refreshing page: %s", self.active_page)
         page = self.config.pages.get(self.active_page)
         assert page is not None
         for button in page.buttons:

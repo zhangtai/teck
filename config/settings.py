@@ -4,12 +4,16 @@ from pathlib import Path
 from typing import Optional
 
 import yaml
-from PIL import Image, ImageOps
-from Teck.utils.images import generate_button_function_image, svg_to_png
+from PIL import Image
+from Teck.utils.images import generate_button_function_image, open_image_as_png
 
-FONTAWESOME_PATH = "assets/vendor/fontawesome"
-SIMPLE_ICONS_PATH = "assets/vendor/simple-icons"
 DEFAULT_FONT = "assets/fonts/Roboto-Regular.ttf"
+
+FILE_PROVIDER_BASE_PATH = {
+    "file": "assets/pages",
+    "fontawesome": "assets/vendor/fontawesome/svgs",
+    "fluentui-emoji": "assets/vendor/fluentui-emoji/assets",
+}
 
 
 @dataclass
@@ -64,18 +68,12 @@ def get_deck_config(
             if button["image"]["provider"] == "function":
                 button_image.pil_image = generate_button_function_image(button["image"]["function"])
                 button_image.function = button["image"]["function"]
-            elif (
-                button["image"]["provider"] == "fontawesome"
-                and Path(f"{FONTAWESOME_PATH}/svgs/{button['image']['path']}").exists()
-            ):
-                png_path = svg_to_png(f"{FONTAWESOME_PATH}/svgs/{button['image']['path']}")
-                button_image.pil_image = ImageOps.invert(Image.open(png_path))
-                button_image.path = button['image']['path']
-            elif (
-                button["image"]["provider"] == "file"
-                and Path(f"assets/pages/{page_name}/{button['image']['path']}").exists()
-            ):
-                button_image.pil_image = Image.open(f"assets/pages/{page_name}/{button['image']['path']}")
+            else:
+                if button["image"]["provider"] == "file":
+                    image_base_path = FILE_PROVIDER_BASE_PATH.get(button["image"]["provider"]) + "/" + page_name
+                else:
+                    image_base_path = FILE_PROVIDER_BASE_PATH.get(button["image"]["provider"])
+                button_image.pil_image = open_image_as_png(f"{image_base_path}/{button['image']['path']}")
                 button_image.path = button['image']['path']
 
             button_config = ButtonConfig(

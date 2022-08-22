@@ -1,7 +1,7 @@
 from datetime import datetime  # noqa: F401 # pylint: disable=unused-import
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 from reportlab.graphics import renderPM
 from svglib.svglib import svg2rlg
 from StreamDeck.Devices.StreamDeck import StreamDeck
@@ -55,3 +55,11 @@ def render_button_image(
         fill="white",
     )
     return PILHelper.to_native_format(deck, image)
+
+
+def open_image_as_png(input_file: str) -> Image.Image:
+    if Path(input_file).suffix.lower() == ".svg":
+        return ImageOps.invert(Image.open(svg_to_png(input_file)))
+    if Path(input_file).suffix.lower() == ".png":
+        return Image.open(input_file)
+    raise TypeError
