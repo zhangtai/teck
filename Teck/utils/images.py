@@ -9,12 +9,6 @@ from StreamDeck.ImageHelpers import PILHelper
 from config.button_display import time_display, today_time_remains
 
 
-def position_to_index(
-    position: tuple[int, int], layout: tuple[int, int] = (3, 5)
-) -> int:
-    return (position[0] - 1) * layout[1] + position[1] - 1
-
-
 def svg_to_png(source: str) -> str:
     drawing = svg2rlg(source)
     filename_no_ext = Path(source).stem

@@ -7,13 +7,10 @@ from PIL import Image, ImageDraw
 from StreamDeck.DeviceManager import DeviceManager
 from StreamDeck.Devices.StreamDeck import StreamDeck
 
-from config.settings import DECK_CONFIG, ButtonConfig
-from Teck.utils.images import generate_button_function_image
+from config.settings import DECK_CONFIG, ButtonConfig, get_deck_config
+from Teck.utils.buttons import get_pressed_buttons_states, position_to_index
+from Teck.utils.images import generate_button_function_image, render_button_image
 
-from ..utils.images import (
-    position_to_index,
-    render_button_image,
-)
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s: %(message)s"
@@ -44,6 +41,10 @@ class Teck(object):
             return streamdecks[0]
         else:
             raise ModuleNotFoundError
+
+    def update_config(self) -> None:
+        logger.info("Teck config updated")
+        self.config = get_deck_config()
 
     def get_button_config(self, key_index):
         page = self.config.pages.get(self.active_page)
@@ -137,25 +138,10 @@ def get_callback(teck: Teck, deck: StreamDeck, page_name: str) -> Callable:
             None,
         )
         if button:
-            freezed_state = [
-                True,
-                False,
-                False,
-                False,
-                True,
-                False,
-                False,
-                False,
-                False,
-                False,
-                False,
-                False,
-                False,
-                False,
-                False,
-            ]
-            if stream_deck.key_states() == freezed_state:
+            if stream_deck.key_states() == get_pressed_buttons_states(DECK_CONFIG.action_triggers["freeze_page"]):
                 teck.toggle_freeze()
+            if stream_deck.key_states() == get_pressed_buttons_states(DECK_CONFIG.action_triggers["reload_config"]):
+                teck.update_config()
             pinned = bool(button.position == [1, 1] and teck.page_freezed)
             update_button_image(deck, button, pinned, pressed)
             if pressed:

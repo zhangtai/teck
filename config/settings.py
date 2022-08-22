@@ -13,6 +13,7 @@ FILE_PROVIDER_BASE_PATH = {
     "file": "assets/pages",
     "fontawesome": "assets/vendor/fontawesome/svgs",
     "fluentui-emoji": "assets/vendor/fluentui-emoji/assets",
+    "google-cloud-icons": "assets/vendor/google-cloud-icons",
 }
 
 
@@ -42,6 +43,7 @@ class PageConfig:
 class DeckConfig:
     refresh_interval: int
     retry_interval: int
+    action_triggers: dict[str, list[tuple[int, int]]]
     pages: dict[str, PageConfig]
 
 
@@ -52,6 +54,7 @@ def get_deck_config(
     configs = DeckConfig(
         refresh_interval=config_dict.get("refresh_interval", 3),
         retry_interval=config_dict.get("retry_interval", 5),
+        action_triggers=config_dict.get("action_triggers"),
         pages={},
     )
     for page_name, page_config in config_dict.get("pages").items():
