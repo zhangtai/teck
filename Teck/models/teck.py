@@ -102,8 +102,9 @@ class Teck(object):
 
 
 def add_pin(base: Image.Image) -> Image.Image:
+    image = base.copy()
     logger.debug(base.size)
-    draw = ImageDraw.Draw(base)
+    draw = ImageDraw.Draw(image)
     draw.ellipse(
         (
             base.size[0] - base.size[0] / 4,
@@ -114,7 +115,7 @@ def add_pin(base: Image.Image) -> Image.Image:
         fill=(255, 0, 0),
         outline=(255, 0, 0),
     )
-    return base
+    return image
 
 
 def update_button_image(
