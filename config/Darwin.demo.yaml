@@ -5,6 +5,16 @@ display_label: False
 action_triggers:
   freeze_page: [[1, 1], [1, 5]]
   reload_config: [[1, 1], [3, 1]]
+image_providers:
+  file:
+    path: assets/pages
+  fontawesome:
+    path: assets/vendor/fontawesome/svgs
+    inverted: true
+  fluentui-emoji:
+    path: assets/vendor/fluentui-emoji/assets
+  google-cloud-icons:
+    path: assets/vendor/google-cloud-icons
 pages:
   "com.apple.finder":
     buttons:
