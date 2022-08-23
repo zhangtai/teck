@@ -159,6 +159,11 @@ def get_callback(teck: Teck, deck: StreamDeck, page_name: str) -> Callable:
                     subprocess.Popen(action.instruction)
                 if action.type == "hotkeys":
                     pyautogui.hotkey(*action.instruction.split("+"))
+                if action.type == "page":
+                    teck.active_page = action.instruction
+                    teck.blank_page()
+                    teck.refresh_page()
+                    teck.toggle_freeze()
                 teck.button_pressed_time[key] = 0
 
     return key_callback
