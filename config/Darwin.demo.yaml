@@ -1,6 +1,7 @@
 ---
 refresh_interval: 3
 retry_interval: 5
+display_label: False
 action_triggers:
   freeze_page: [[1, 1], [1, 5]]
   reload_config: [[1, 1], [3, 1]]

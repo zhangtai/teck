@@ -34,21 +34,25 @@ def generate_button_function_image(script: str, font_filename: str = "assets/fon
 def render_button_image(
     deck: StreamDeck,
     icon: Image.Image,
-    label_text: str,
+    label_text: str = "",
     pressed: bool = False,
     font_filename: str = "assets/fonts/Roboto-Regular.ttf",
 ):
-    margins = [10, 10, 30, 10] if pressed else [0, 0, 20, 0]
-    image = PILHelper.create_scaled_image(deck, icon, margins=margins)
-    draw = ImageDraw.Draw(image)
-    font = ImageFont.truetype(font_filename, 14)
-    draw.text(
-        (image.width / 2, image.height - 5),
-        text=label_text,
-        font=font,
-        anchor="ms",
-        fill="white",
-    )
+    if label_text:
+        margins = [5, 5, 25, 5] if pressed else [0, 0, 20, 0]
+        image = PILHelper.create_scaled_image(deck, icon, margins=margins)
+        draw = ImageDraw.Draw(image)
+        font = ImageFont.truetype(font_filename, 14)
+        draw.text(
+            (image.width / 2, image.height - 5),
+            text=label_text,
+            font=font,
+            anchor="ms",
+            fill="white",
+        )
+    else:
+        margins = [10, 10, 10, 10] if pressed else [5, 5, 5, 5]
+        image = PILHelper.create_scaled_image(deck, icon, margins=margins)
     return PILHelper.to_native_format(deck, image)
 
 

@@ -17,7 +17,7 @@ logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s: %(message)s"
 )
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 class Teck(object):
@@ -45,8 +45,8 @@ class Teck(object):
             raise ModuleNotFoundError
 
     def update_config(self) -> None:
-        logger.info("Teck config updated")
         self.config = get_deck_config()
+        logger.info("Teck config updated")
 
     def get_button_config(self, key_index):
         page = self.config.pages.get(self.active_page)
@@ -71,7 +71,7 @@ class Teck(object):
         for button in page.buttons:
             logger.debug(button.position)
             pinned = bool(button.position == [1, 1] and self.page_freezed)
-            update_button_image(self.device, button, pinned, False)
+            update_button_image(self.device, button, self.config.display_label, pinned, False)
         self.device.set_key_callback(get_callback(self, self.device, self.active_page))
 
     def refresh_button_text_image(self) -> None:
@@ -118,14 +118,15 @@ def add_pin(base: Image.Image) -> Image.Image:
 
 
 def update_button_image(
-    deck: StreamDeck, button: ButtonConfig, pinned: bool, pressed: bool
+    deck: StreamDeck, button: ButtonConfig, pinned: bool, display_label: bool, pressed: bool
 ):
     button_index = position_to_index(button.position)
     if 0 <= button_index <= deck.key_count() - 1:
         assert button.image.pil_image is not None
         icon = add_pin(button.image.pil_image) if pinned else button.image.pil_image
         assert icon is not None
-        image = render_button_image(deck, icon, button.label, pressed)
+        label = button.label if display_label else ""
+        image = render_button_image(deck, icon, label, pressed)
         with deck:
             deck.set_key_image(button_index, image)
 
@@ -145,7 +146,7 @@ def get_callback(teck: Teck, deck: StreamDeck, page_name: str) -> Callable:
             if stream_deck.key_states() == get_pressed_buttons_states(DECK_CONFIG.action_triggers["reload_config"]):
                 teck.update_config()
             pinned = bool(button.position == [1, 1] and teck.page_freezed)
-            update_button_image(deck, button, pinned, pressed)
+            update_button_image(deck, button, pinned, teck.config.display_label, pressed)
             if pressed:
                 teck.button_pressed_time[key] = time.time()
             else:

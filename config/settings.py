@@ -65,6 +65,7 @@ class DeckConfig:
     refresh_interval: int
     retry_interval: int
     action_triggers: dict[str, list[tuple[int, int]]]
+    display_label: bool
     pages: dict[str, PageConfig]
 
 
@@ -76,6 +77,7 @@ def get_deck_config(
         refresh_interval=config_dict.get("refresh_interval", 3),
         retry_interval=config_dict.get("retry_interval", 5),
         action_triggers=config_dict.get("action_triggers"),
+        display_label=config_dict.get("display_label", True),
         pages={},
     )
     for page_name, page_config in config_dict.get("pages").items():
