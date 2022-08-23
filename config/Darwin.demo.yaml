@@ -12,15 +12,22 @@ pages:
         image:
           provider: fontawesome
           path: brands/apple.svg
-        action:
-          hotkeys: shift|command|a
+        actions:
+          short:
+            type: hotkeys
+            instruction: shift+command+a
+          long:
+            type: hotkeys
+            instruction: shift+command+h
       - position: [1, 2]
         label: Downloads
         image:
           provider: fontawesome
           path: solid/download.svg
-        action:
-          hotkeys: option|command|l
+        actions:
+          short:
+            type: hotkeys
+            instruction: option+command+l
   "com.microsoft.VSCode":
     buttons:
       - position: [1, 1]
@@ -28,22 +35,28 @@ pages:
         image:
           provider: file
           path: vscode.png
-        action:
-          hotkeys: f1
+        actions:
+          short:
+            type: hotkeys
+            instruction: f1
       - position: [1, 2]
         label: Search
         image:
           provider: fontawesome
           path: solid/magnifying-glass.svg
-        action:
-          hotkeys: command|shift|f
+        actions:
+          short:
+            type: hotkeys
+            instruction: shift+command+f
       - position: [3, 2]
         label: Time
         image:
           provider: function
           function: time_display()
-        action:
-          hotkeys: win
+        actions:
+          short:
+            type: hotkeys
+            instruction: f1
   "co.zeit.hyper":
     buttons:
       - position: [1, 1]
@@ -51,29 +64,37 @@ pages:
         image:
           provider: fontawesome
           path: solid/terminal.svg
-        action:
-          hotkeys: f1
+        actions:
+          short:
+            type: hotkeys
+            instruction: f1
       - position: [1, 2]
         label: Search
         image:
           provider: fontawesome
           path: solid/magnifying-glass.svg
-        action:
-          hotkeys: command|f
+        actions:
+          short:
+            type: hotkeys
+            instruction: command+f
       - position: [2, 1]
         label: Copy
         image:
           provider: fontawesome
           path: solid/copy.svg
-        action:
-          hotkeys: command|c
+        actions:
+          short:
+            type: hotkeys
+            instruction: command+c
       - position: [2, 2]
         label: Paste
         image:
           provider: fontawesome
           path: solid/paste.svg
-        action:
-          hotkeys: command|v
+        actions:
+          short:
+            type: hotkeys
+            instruction: command+v
   "com.apple.Safari":
     buttons:
       - position: [1, 1]
@@ -81,8 +102,10 @@ pages:
         image:
           provider: file
           path: safari.png
-        action:
-          hotkeys: f1
+        actions:
+          short:
+            type: hotkeys
+            instruction: f1
   "org.mozilla.firefox":
     buttons:
       - position: [1, 1]
@@ -90,8 +113,10 @@ pages:
         image:
           provider: file
           path: firefox.png
-        action:
-          hotkeys: f1
+        actions:
+          short:
+            type: hotkeys
+            instruction: f1
   "com.apple.Photos":
     buttons:
       - position: [1, 2]
@@ -99,5 +124,7 @@ pages:
         image:
           provider: fontawesome
           path: solid/heart.svg
-        action:
-          hotkeys: .
+        actions:
+          short:
+            type: hotkeys
+            instruction: .
