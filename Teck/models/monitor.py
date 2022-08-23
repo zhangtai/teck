@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 if platform.system() == "Darwin":
-    from AppKit import NSWorkspace  # pylint: disable=no-name-in-module
+    from AppKit import NSWorkspace  # pyright: ignore # pylint: disable=no-name-in-module,import-error
 
     def get_active_application_name() -> str:
         active_app_name = (
@@ -25,8 +25,8 @@ if platform.system() == "Darwin":
 
 if platform.system() == "Windows":
     import psutil
-    from win32gui import GetForegroundWindow, GetWindowText  # noqa=F401 # pylint: disable=import-error,unused-import
-    from win32process import GetWindowThreadProcessId  # noqa=F401 # pylint: disable=import-error,unused-import
+    from win32gui import GetForegroundWindow, GetWindowText  # noqa=F401 # pylint: disable=import-error,unused-import,no-name-in-module
+    from win32process import GetWindowThreadProcessId  # noqa=F401 # pylint: disable=import-error,unused-import,no-name-in-module
 
     def get_active_application_name() -> str:  # noqa=F811 # pylint: disable=function-redefined
         new_pid = GetWindowThreadProcessId(GetForegroundWindow())
@@ -42,7 +42,6 @@ class Monitor():
     """Class to monitor window switch and trigger Teck instance page switching."""
     def __init__(self) -> None:
         self.teck = Teck()
-        self.active_application = "system"
 
     def start(self) -> None:
         logger.info("Monitor started")
@@ -68,4 +67,7 @@ class Monitor():
                         )
                         time.sleep(self.teck.config.retry_interval)
                         self.teck.refresh_page()
-            time.sleep(3)
+            time.sleep(1.5)
+
+    def stop(self) -> None:
+        logger.info("Shutting down monitor")
