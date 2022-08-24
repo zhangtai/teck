@@ -8,7 +8,7 @@ from PIL import Image
 from StreamDeck.DeviceManager import DeviceManager
 from StreamDeck.Devices.StreamDeck import StreamDeck
 
-from config.settings import DECK_CONFIG, ButtonConfig, get_deck_config
+from config.settings import DECK_CONFIG, ButtonAction, ButtonConfig, get_deck_config
 from Teck.utils.buttons import get_pressed_buttons_states, position_to_index
 from Teck.utils.images import add_pin, generate_button_function_image, render_button_image
 
@@ -28,7 +28,7 @@ class Teck():
         self.active_page: str = list(self.config.pages.keys())[0]
         self.page_freezed = False
         self._active_process_name: str = ""
-        self.button_pressed_time = [0] * 15
+        self.button_pressed_time = [0.0] * 15
 
         self.device.open()
         self.device.reset()
@@ -136,25 +136,27 @@ def get_callback(teck: Teck, deck: StreamDeck, page_name: str) -> Callable:
             else:
                 duration = time.time() - teck.button_pressed_time[button_index]
                 logger.debug("Pressing duration: %s", duration)
-
                 action = button.actions.short if duration < 0.55 or not button.actions.long else button.actions.long
                 logger.debug("Action is: %s", action)
-                if action.type == "subprocess":
-                    subprocess.Popen(action.instruction)
-                if action.type == "hotkeys":
-                    pyautogui.hotkey(*action.instruction.split("+"))
-                if action.type == "key_sequences":
-                    for key in action.instruction.split(","):
-                        if "+" in key:
-                            pyautogui.hotkey(*key.split("+"))
-                        else:
-                            pyautogui.press(key)
-                        time.sleep(0.1)
-                if action.type == "page":
-                    teck.active_page = action.instruction
-                    teck.blank_page()
-                    teck.refresh_page()
-                    teck.page_freezed = True
+                execute_action(teck, action)
                 teck.button_pressed_time[button_index] = 0
-
     return key_callback
+
+
+def execute_action(teck: Teck, action: ButtonAction) -> None:
+    if action.type == "subprocess":
+        subprocess.Popen(action.instruction)
+    if action.type == "hotkeys":
+        pyautogui.hotkey(*action.instruction.split("+"))
+    if action.type == "key_sequences":
+        for key in action.instruction.split(","):
+            if "+" in key:
+                pyautogui.hotkey(*key.split("+"))
+            else:
+                pyautogui.press(key)
+            time.sleep(0.1)
+    if action.type == "page":
+        teck.active_page = action.instruction
+        teck.blank_page()
+        teck.refresh_page()
+        teck.page_freezed = True
