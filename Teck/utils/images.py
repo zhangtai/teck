@@ -62,3 +62,19 @@ def open_image_as_png(input_file: str) -> Image.Image:
     if Path(input_file).suffix.lower() == ".png":
         return Image.open(input_file)
     raise TypeError
+
+
+def add_pin(base: Image.Image) -> Image.Image:
+    image = base.copy()
+    draw = ImageDraw.Draw(image)
+    draw.ellipse(
+        (
+            base.size[0] - base.size[0] / 4,
+            base.size[1] - base.size[0] / 4,
+            base.size[0],
+            base.size[1],
+        ),
+        fill=(255, 0, 0),
+        outline=(255, 0, 0),
+    )
+    return image

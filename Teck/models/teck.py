@@ -4,13 +4,13 @@ import time
 from typing import Callable
 
 import pyautogui
-from PIL import Image, ImageDraw
+from PIL import Image
 from StreamDeck.DeviceManager import DeviceManager
 from StreamDeck.Devices.StreamDeck import StreamDeck
 
 from config.settings import DECK_CONFIG, ButtonConfig, get_deck_config
 from Teck.utils.buttons import get_pressed_buttons_states, position_to_index
-from Teck.utils.images import generate_button_function_image, render_button_image
+from Teck.utils.images import add_pin, generate_button_function_image, render_button_image
 
 
 logging.basicConfig(
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class Teck(object):
+class Teck():
     def __init__(self) -> None:
         logger.info("Connecting device")
         self.device = self._discover_first_deck()
@@ -101,23 +101,6 @@ class Teck(object):
         self.page_freezed = not self.page_freezed
 
 
-def add_pin(base: Image.Image) -> Image.Image:
-    image = base.copy()
-    logger.debug(base.size)
-    draw = ImageDraw.Draw(image)
-    draw.ellipse(
-        (
-            base.size[0] - base.size[0] / 4,
-            base.size[1] - base.size[0] / 4,
-            base.size[0],
-            base.size[1],
-        ),
-        fill=(255, 0, 0),
-        outline=(255, 0, 0),
-    )
-    return image
-
-
 def update_button_image(
     deck: StreamDeck, button: ButtonConfig, pinned: bool, display_label: bool, pressed: bool
 ):
@@ -133,12 +116,12 @@ def update_button_image(
 
 
 def get_callback(teck: Teck, deck: StreamDeck, page_name: str) -> Callable:
-    def key_callback(stream_deck: StreamDeck, key: int, pressed: bool):
-        logger.info("Page: %s. %s: %s", page_name, key, pressed)
+    def key_callback(stream_deck: StreamDeck, button_index: int, pressed: bool):
+        logger.info("Page: %s. %s: %s", page_name, button_index, pressed)
         page = DECK_CONFIG.pages.get(page_name)
         assert page is not None
         button = next(
-            (b for b in page.buttons if position_to_index(b.position) == key),
+            (b for b in page.buttons if position_to_index(b.position) == button_index),
             None,
         )
         if button:
@@ -149,9 +132,9 @@ def get_callback(teck: Teck, deck: StreamDeck, page_name: str) -> Callable:
             pinned = bool(button.position == [1, 1] and teck.page_freezed)
             update_button_image(deck, button, pinned, teck.config.display_label, pressed)
             if pressed:
-                teck.button_pressed_time[key] = time.time()
+                teck.button_pressed_time[button_index] = time.time()
             else:
-                duration = time.time() - teck.button_pressed_time[key]
+                duration = time.time() - teck.button_pressed_time[button_index]
                 logger.debug("Pressing duration: %s", duration)
 
                 action = button.actions.short if duration < 0.55 or not button.actions.long else button.actions.long
@@ -160,11 +143,18 @@ def get_callback(teck: Teck, deck: StreamDeck, page_name: str) -> Callable:
                     subprocess.Popen(action.instruction)
                 if action.type == "hotkeys":
                     pyautogui.hotkey(*action.instruction.split("+"))
+                if action.type == "key_sequences":
+                    for key in action.instruction.split(","):
+                        if "+" in key:
+                            pyautogui.hotkey(*key.split("+"))
+                        else:
+                            pyautogui.press(key)
+                        time.sleep(0.1)
                 if action.type == "page":
                     teck.active_page = action.instruction
                     teck.blank_page()
                     teck.refresh_page()
-                    teck.toggle_freeze()
-                teck.button_pressed_time[key] = 0
+                    teck.page_freezed = True
+                teck.button_pressed_time[button_index] = 0
 
     return key_callback
