@@ -47,6 +47,7 @@ class Teck():
     def update_config(self) -> None:
         self.config = get_deck_config()
         logger.info("Teck config updated")
+        self.refresh_page()
 
     def get_button_config(self, key_index):
         page = self.config.pages.get(self.active_page)

@@ -1,3 +1,4 @@
+import math
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
@@ -9,8 +10,13 @@ from StreamDeck.ImageHelpers import PILHelper
 from config.button_display import time_display, today_time_remains  # noqa: F401 # pylint: disable=unused-import
 
 
-def svg_to_png(source: str) -> str:
+def svg_to_png(source: str, min_width: int = 128) -> str:
     drawing = svg2rlg(source)
+    if 0 < drawing.width < 128:
+        scale = math.ceil(min_width / drawing.width)
+        drawing.width = drawing.minWidth() * scale
+        drawing.height = drawing.height * scale
+        drawing.scale(scale, scale)
     filename_no_ext = Path(source).stem
     final_image = f"assets/temp/{filename_no_ext}.png"
     renderPM.drawToFile(drawing, final_image, fmt="PNG")
