@@ -10,7 +10,7 @@ from StreamDeck.ImageHelpers import PILHelper
 from config.button_display import time_display, today_time_remains  # noqa: F401 # pylint: disable=unused-import
 from config.logger import get_logger
 
-logger = get_logger(__file__)
+logger = get_logger(__name__)
 
 
 def svg_to_png(source: str, min_width: int = 128) -> str:

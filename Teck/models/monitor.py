@@ -9,13 +9,11 @@ from Teck.utils.applications import bring_window_front
 
 from .teck import Teck
 
-logger = get_logger(__file__)
+logger = get_logger(__name__)
 
 
 if platform.system() == "Darwin":
-    from AppKit import (
-        NSWorkspace,  # pyright: ignore # pylint: disable=no-name-in-module,import-error
-    )
+    from AppKit import NSWorkspace  # pyright: ignore # pylint: disable=no-name-in-module,import-error
 
     def get_active_application_name() -> str:
         active_app_name = (

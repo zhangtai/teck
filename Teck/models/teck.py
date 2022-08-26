@@ -17,7 +17,7 @@ from Teck.utils.images import (
     render_button_image,
 )
 
-logger = get_logger(__file__)
+logger = get_logger(__name__)
 
 
 class Teck():

@@ -2,7 +2,7 @@ import logging
 import sys
 from logging.handlers import TimedRotatingFileHandler
 
-FORMATTER = logging.Formatter("%(asctime)s — %(name)s — %(levelname)s — %(message)s")
+FORMATTER = logging.Formatter("%(asctime)s-- %(levelname)s -- %(name)s -- %(message)s")
 LOG_FILE = "teck.log"
 
 
@@ -20,7 +20,7 @@ def get_file_handler() -> logging.FileHandler:
 
 def get_logger(logger_name: str) -> logging.Logger:
     logger = logging.getLogger(logger_name)
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
     logger.addHandler(get_console_handler())
     logger.addHandler(get_file_handler())
     logger.propagate = False

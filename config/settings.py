@@ -11,7 +11,7 @@ from Teck.utils.images import generate_button_function_image, open_image_as_png
 from .logger import get_logger
 
 DEFAULT_FONT = "assets/fonts/Roboto-Regular.ttf"
-logger = get_logger(__file__)
+logger = get_logger(__name__)
 
 
 @dataclass
