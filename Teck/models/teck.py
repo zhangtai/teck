@@ -1,4 +1,3 @@
-import logging
 import subprocess
 import time
 from typing import Callable
@@ -8,16 +7,17 @@ from PIL import Image
 from StreamDeck.DeviceManager import DeviceManager
 from StreamDeck.Devices.StreamDeck import StreamDeck
 
+from config.logger import get_logger
 from config.settings import DECK_CONFIG, ButtonAction, ButtonConfig, get_deck_config
+from Teck.utils.applications import bring_window_front
 from Teck.utils.buttons import get_pressed_buttons_states, position_to_index
-from Teck.utils.images import add_pin, generate_button_function_image, render_button_image
-
-
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s: %(message)s"
+from Teck.utils.images import (
+    add_pin,
+    generate_button_function_image,
+    render_button_image,
 )
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+
+logger = get_logger(__file__)
 
 
 class Teck():
@@ -161,3 +161,5 @@ def execute_action(teck: Teck, action: ButtonAction) -> None:
         teck.blank_page()
         teck.refresh_page()
         teck.page_freezed = True
+    if action.type == "activate_window":
+        bring_window_front(action.instruction, lambda k, t: k == t)

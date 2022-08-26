@@ -5,9 +5,13 @@ from typing import Optional
 
 import yaml
 from PIL import Image, ImageOps
+
 from Teck.utils.images import generate_button_function_image, open_image_as_png
 
+from .logger import get_logger
+
 DEFAULT_FONT = "assets/fonts/Roboto-Regular.ttf"
+logger = get_logger(__file__)
 
 
 @dataclass
@@ -56,6 +60,7 @@ class DeckConfig:
 def get_deck_config(
     config_file: str = f"config/{platform.system()}.demo.yaml",
 ) -> DeckConfig:
+    logger.info("Reading config from file: %s", config_file)
     config_dict = yaml.load(Path(config_file).read_text(encoding="utf-8"), Loader=yaml.FullLoader)
     image_providers = config_dict["image_providers"]
     configs = DeckConfig(

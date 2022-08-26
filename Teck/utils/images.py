@@ -8,6 +8,9 @@ from StreamDeck.Devices.StreamDeck import StreamDeck
 from StreamDeck.ImageHelpers import PILHelper
 
 from config.button_display import time_display, today_time_remains  # noqa: F401 # pylint: disable=unused-import
+from config.logger import get_logger
+
+logger = get_logger(__file__)
 
 
 def svg_to_png(source: str, min_width: int = 128) -> str:
@@ -63,6 +66,9 @@ def render_button_image(
 
 
 def open_image_as_png(input_file: str) -> Image.Image:
+    if not Path(input_file).exists():
+        logger.error("Can not find file: %s", input_file)
+        raise FileNotFoundError
     if Path(input_file).suffix.lower() == ".svg":
         return Image.open(svg_to_png(input_file))
     if Path(input_file).suffix.lower() == ".png":

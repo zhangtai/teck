@@ -1,19 +1,21 @@
-import logging
 import platform
 import time
+from datetime import datetime
 
 from StreamDeck.Transport.Transport import TransportError
 
+from config.logger import get_logger
+from Teck.utils.applications import bring_window_front
+
 from .teck import Teck
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %f(levelname)s: %(message)s"
-)
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger = get_logger(__file__)
+
 
 if platform.system() == "Darwin":
-    from AppKit import NSWorkspace  # pyright: ignore # pylint: disable=no-name-in-module,import-error
+    from AppKit import (
+        NSWorkspace,  # pyright: ignore # pylint: disable=no-name-in-module,import-error
+    )
 
     def get_active_application_name() -> str:
         active_app_name = (
@@ -25,8 +27,13 @@ if platform.system() == "Darwin":
 
 if platform.system() == "Windows":
     import psutil
-    from win32gui import GetForegroundWindow, GetWindowText  # noqa=F401 # pylint: disable=import-error,unused-import,no-name-in-module
-    from win32process import GetWindowThreadProcessId  # noqa=F401 # pylint: disable=import-error,unused-import,no-name-in-module
+    from win32gui import (  # noqa=F401 # pylint: disable=import-error,unused-import,no-name-in-module
+        GetForegroundWindow,
+        GetWindowText,
+    )
+    from win32process import (  # noqa=F401 # pylint: disable=import-error,unused-import,no-name-in-module
+        GetWindowThreadProcessId,
+    )
 
     def get_active_application_name() -> str:  # noqa=F811 # pylint: disable=function-redefined
         new_pid = GetWindowThreadProcessId(GetForegroundWindow())
@@ -67,7 +74,10 @@ class Monitor():
                         )
                         time.sleep(self.teck.config.retry_interval)
                         self.teck.refresh_page()
-            time.sleep(1.5)
+            if datetime.now().minute % 29 == 0 and datetime.now().second < 1.5:
+                logger.info("Current second is %d", datetime.now().second)
+                bring_window_front("- Outlook", lambda k, t: t.endswith(k))
+            time.sleep(1)
 
     def stop(self) -> None:
         logger.info("Shutting down monitor")
